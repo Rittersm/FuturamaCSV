@@ -22,13 +22,12 @@ class Delivery
 
 end
 
-deliveries = []
+delivery_objects = []
 
 CSV.foreach("planet_express_logs.csv", headers: true) do |row|
-  deliveries << row.to_hash
+  delivery_objects << Delivery.new(row["Destination"], row["Shipment"], row["Crates"].to_s.to_i, row["Money"].to_s.to_i)
 end
 
-delivery_objects = deliveries.collect{|x| Delivery.new(x["Destination"], x["Shipment"], x["Crates"].to_i, x["Money"].to_i)}
 
 total_revenue = delivery_objects.inject(0){|sum, x| sum += x.money}
 
