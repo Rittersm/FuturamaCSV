@@ -14,7 +14,6 @@
   color: rgb(211, 214, 213);
   font-family: Impact, Charcoal, sans-serif;
 }
-
 #main h1 {
   margin-top: 70px;
 }
@@ -27,11 +26,6 @@
 hr {
   border-top: 2px solid black;
 }
-
-#piechart {
-  display: inline-block;
-  padding: 0px;
-}
 #planets {
   margin-left: -40px;
   margin-top: 150px;
@@ -39,4 +33,14 @@ hr {
 #planets * {
   text-align: center;
   border: 1px solid black;
+}
+#bender_great {
+  padding-top: 100px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-family: Arial Black, Gadget, sans-serif;
+  font-size: 7vw;
+}
+#footer {
+  margin-bottom: 25px;
 }
