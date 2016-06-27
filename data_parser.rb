@@ -10,20 +10,14 @@ class Delivery
     @shipment = shipment
     @crates = crates.to_i
     @money = money.to_i
-    determine_pilot
+    @pilot = determine_pilot[destination.to_sym]
     determine_bonus
   end
-ss
+
   def determine_pilot
-    if destination == "Earth"
-      self.pilot = "Fry"
-    elsif destination == "Mars"
-      self.pilot = "Amy"
-    elsif destination == "Uranus"
-      self.pilot = "Bender"
-    else
-      self.pilot = "Leela"
-    end
+    pilots = { Earth: "Fry", Uranus: "Bender", Mars: "Amy" }
+    pilots.default = "Leela"
+    pilots
   end
 
   def determine_bonus
@@ -90,3 +84,5 @@ end
 new_file = File.open("./report.html", "w+")
 new_file << ERB.new(File.read("./report.html.erb")).result(binding)
 new_file.close
+
+puts delivery_objects.inspect
