@@ -42,7 +42,7 @@
     <hr>
     <main class="container-fluid" id="main">
       <div class="row">
-        <h1 class="col-md-4 text"><u>Total Revenue: <%= total_revenue %></u></h1>
+        <h1 class="col-md-4 text"><u>Total Revenue: <%= Delivery.total_revenue %></u></h1>
         <table class="col-md-3 col-md-offset-1">
           <tr>
             <th>Destination</th>
@@ -65,7 +65,7 @@
             <th>Total Deliveries</th>
             <th>Bonus</th>
           </tr>
-          <% total_deliveries.first.each do |pilot| %>
+          <% pilot_data.first.each do |pilot| %>
             <tr>
               <td><%= pilot[:pilot] %></td>
               <td><%= pilot[:deliveries] %></td>

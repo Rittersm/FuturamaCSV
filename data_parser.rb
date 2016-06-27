@@ -2,8 +2,13 @@ require 'erb'
 require 'csv'
 
 class Delivery
+  @@total_revenue = 0
 
   attr_accessor :destination, :shipment, :crates, :money, :pilot, :bonus
+
+  def self.total_revenue
+    @@total_revenue
+  end
 
   def initialize(destination, shipment, crates, money)
     @destination = destination
@@ -12,6 +17,7 @@ class Delivery
     @money = money
     @pilot = determine_pilot[destination.to_sym]
     @bonus = money / 10.0
+    @@total_revenue += money
   end
 
   def determine_pilot
@@ -20,6 +26,9 @@ class Delivery
     pilots
   end
 
+  def Delivery.pilot_deliveries(pilot)
+    delivery_objects.select{|delivery| delivery.pilot == pilot}
+  end
 end
 
 delivery_objects = []
@@ -28,16 +37,13 @@ CSV.foreach("planet_express_logs.csv", headers: true) do |row|
   delivery_objects << Delivery.new(row["Destination"], row["Shipment"], row["Crates"].to_s.to_i, row["Money"].to_s.to_i)
 end
 
-
-total_revenue = delivery_objects.inject(0){|sum, x| sum += x.money}
-
 pilots = delivery_objects.collect{|delivery| delivery.pilot}.uniq
 
 planets = delivery_objects.collect{|planet| planet.destination}.uniq
 
-total_deliveries = []
+pilot_data = []
 
-total_deliveries << pilots.map do |pilot|
+pilot_data << pilots.map do |pilot|
   {
     pilot: pilot,
     deliveries: delivery_objects.select{|delivery| delivery.pilot == pilot}.length.to_i,
@@ -68,3 +74,4 @@ new_file << ERB.new(File.read("./report.html.erb")).result(binding)
 new_file.close
 
 puts delivery_objects.inspect
+puts Delivery.total_revenue
