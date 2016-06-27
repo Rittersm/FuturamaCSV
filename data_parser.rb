@@ -13,7 +13,7 @@ class Delivery
     determine_pilot
     determine_bonus
   end
-
+ss
   def determine_pilot
     if destination == "Earth"
       self.pilot = "Fry"
