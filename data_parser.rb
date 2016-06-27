@@ -32,19 +32,6 @@ delivery_objects = deliveries.collect{|x| Delivery.new(x["Destination"], x["Ship
 
 total_revenue = delivery_objects.inject(0){|sum, x| sum += x.money}
 
-class Pilot
-
-  attr_accessor :pilot, :deliveries, :revenue, :bonus
-
-  def initialize(pilot, deliveries, revenue, bonus)
-    @pilot = pilot
-    @deliveries = deliveries
-    @revenue = revenue
-    @bonus = bonus
-  end
-
-end
-
 pilots = delivery_objects.collect{|delivery| delivery.pilot}.uniq
 
 planets = delivery_objects.collect{|planet| planet.destination}.uniq
