@@ -11,17 +11,13 @@ class Delivery
     @crates = crates
     @money = money
     @pilot = determine_pilot[destination.to_sym]
-    determine_bonus
+    @bonus = money / 10.0
   end
 
   def determine_pilot
     pilots = { Earth: "Fry", Uranus: "Bender", Mars: "Amy"}
     pilots.default = "Leela"
     pilots
-  end
-
-  def determine_bonus
-    self.bonus = self.money / 10.0
   end
 
 end
