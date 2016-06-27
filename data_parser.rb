@@ -8,14 +8,14 @@ class Delivery
   def initialize(destination, shipment, crates, money)
     @destination = destination
     @shipment = shipment
-    @crates = crates.to_i
-    @money = money.to_i
+    @crates = crates
+    @money = money
     @pilot = determine_pilot[destination.to_sym]
     determine_bonus
   end
 
   def determine_pilot
-    pilots = { Earth: "Fry", Uranus: "Bender", Mars: "Amy" }
+    pilots = { Earth: "Fry", Uranus: "Bender", Mars: "Amy"}
     pilots.default = "Leela"
     pilots
   end
@@ -32,7 +32,7 @@ CSV.foreach("planet_express_logs.csv", headers: true) do |row|
   deliveries << row.to_hash
 end
 
-delivery_objects = deliveries.collect{|x| Delivery.new(x["Destination"], x["Shipment"], x["Crates"], x["Money"])}
+delivery_objects = deliveries.collect{|x| Delivery.new(x["Destination"], x["Shipment"], x["Crates"].to_i, x["Money"].to_i)}
 
 total_revenue = delivery_objects.inject(0){|sum, x| sum += x.money}
 
