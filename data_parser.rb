@@ -3,6 +3,8 @@ require 'csv'
 
 class Delivery
   @@total_revenue = 0
+  @@all_pilots = []
+  @@pilot_data = []
 
   attr_accessor :destination, :shipment, :crates, :money, :pilot, :bonus
 
@@ -10,6 +12,10 @@ class Delivery
     @@total_revenue
   end
 
+  def self.all_pilots
+    @@all_pilots
+  end
+  
   def initialize(destination, shipment, crates, money)
     @destination = destination
     @shipment = shipment
@@ -18,6 +24,9 @@ class Delivery
     @pilot = determine_pilot[destination.to_sym]
     @bonus = money / 10.0
     @@total_revenue += money
+      unless @@all_pilots.include?(pilot)
+        @@all_pilots << pilot
+      end
   end
 
   def determine_pilot
@@ -75,3 +84,4 @@ new_file.close
 
 puts delivery_objects.inspect
 puts Delivery.total_revenue
+puts Delivery.all_pilots
