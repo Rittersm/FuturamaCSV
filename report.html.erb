@@ -55,7 +55,7 @@
               <td><%= x.destination %></td>
               <td><%= x.shipment %></td>
               <td><%= x.crates %></td>
-              <td><%= x.money %></td>
+              <td>$<%= x.money %></td>
             </tr>
           <% end %>
         </table>
@@ -69,7 +69,7 @@
             <tr>
               <td><%= x[:pilot] %></td>
               <td><%= x[:deliveries] %></td>
-              <td><%= x[:bonus] %></td>
+              <td>$<%= x[:bonus] %></td>
             </tr>
             <% end %>
         </table>
@@ -82,10 +82,10 @@
             <th>Planet</th>
             <th>Revenue</th>
           </tr>
-          <% revenue_by_planet.first.each do |planet| %>
+          <% Delivery.planet_money.each do |planet, revenue| %>
             <tr>
-              <td><%= planet[:planet] %></td>
-              <td><%= planet[:revenue] %></td>
+              <td><%= planet %></td>
+              <td>$<%= revenue %></td>
             </tr>
           <% end %>
         </table>
