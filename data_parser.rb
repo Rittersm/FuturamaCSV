@@ -5,9 +5,9 @@ class Delivery
   @@total_revenue = 0
   @@all_pilots = []
   @@planets = []
-  @@pilot_data = []
-
-  attr_accessor :destination, :shipment, :crates, :money, :pilot, :bonus
+  @@pilot_money = {}
+  @@planet_money = {}
+  attr_accessor :destination, :shipment, :crates, :money, :pilot, :bonus,
 
   def self.total_revenue
     @@total_revenue
@@ -21,12 +21,31 @@ class Delivery
     @@planets
   end
 
+  def self.pilot_money
+    @@pilot_money
+  end
+
+  def self.planet_money
+    @@planet_money
+  end
+
+
+  def pilot_money_writer
+    # unless defined?(@@pilot_data)
+      @@pilot_money[pilot] = @@pilot_money[pilot].to_i + money
+  end
+
+  def planet_money_writer
+    @@planet_money[destination] = @@planet_money[destination].to_i + money
+  end
+
   def initialize(destination, shipment, crates, money)
     @destination = destination
     @shipment = shipment
     @crates = crates
     @money = money
     @pilot = determine_pilot[destination.to_sym]
+    @pilot1 = @pilot + "1"
     @bonus = money / 10.0
     @@total_revenue += money
       unless @@all_pilots.include?(pilot)
@@ -35,6 +54,8 @@ class Delivery
       unless @@planets.include?(destination)
         @@planets << destination
       end
+    pilot_money_writer
+    planet_money_writer
   end
 
   def determine_pilot
@@ -91,6 +112,6 @@ new_file << ERB.new(File.read("./report.html.erb")).result(binding)
 new_file.close
 
 puts delivery_objects.inspect
-puts Delivery.total_revenue
-puts Delivery.all_pilots
-puts Delivery.planets
+
+puts Delivery.pilot_money.to_a.inspect
+puts Delivery.planet_money.inspect
