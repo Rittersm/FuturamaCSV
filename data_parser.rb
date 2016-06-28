@@ -1,92 +1,93 @@
 require 'erb'
 require 'csv'
 
+# Class objects are rows of the csv file brought in.
 class Delivery
-
+  @@total_revenue = 0
+  @@all_pilots = []
+  @@planets = []
+  @@pilot_money = {}
+  @@planet_money = {}
   attr_accessor :destination, :shipment, :crates, :money, :pilot, :bonus
+
+  def self.total_revenue
+    @@total_revenue
+  end
+
+  def self.all_pilots
+    @@all_pilots
+  end
+
+  def self.planets
+    @@planets
+  end
+
+  def self.pilot_money
+    @@pilot_money
+  end
+
+  def self.planet_money
+    @@planet_money
+  end
+
+  def pilot_money_writer
+    @@pilot_money[pilot] = @@pilot_money[pilot].to_i + money
+  end
+
+  def planet_money_writer
+    @@planet_money[destination] = @@planet_money[destination].to_i + money
+  end
 
   def initialize(destination, shipment, crates, money)
     @destination = destination
     @shipment = shipment
-    @crates = crates.to_i
-    @money = money.to_i
-    determine_pilot
-    determine_bonus
+    @crates = crates
+    @money = money
+    @pilot = determine_pilot[destination.to_sym]
+    @bonus = money / 10.0
+    @@total_revenue += money
+    @@all_pilots << pilot unless @@all_pilots.include?(pilot)
+    @@planets << destination unless @@planets.include?(destination)
+    pilot_money_writer
+    planet_money_writer
   end
 
   def determine_pilot
-    if destination == "Earth"
-      self.pilot = "Fry"
-    elsif destination == "Mars"
-      self.pilot = "Amy"
-    elsif destination == "Uranus"
-      self.pilot = "Bender"
-    else
-      self.pilot = "Leela"
-    end
+    pilots = { Earth: 'Fry', Uranus: 'Bender', Mars: 'Amy' }
+    pilots.default = 'Leela'
+    pilots
   end
 
-  def determine_bonus
-    self.bonus = self.money / 10.0
+  def self.pilot_deliveries(pilot)
+    delivery_objects.select { |delivery| delivery.pilot == pilot }
   end
-
 end
 
-deliveries = []
+delivery_objects = []
 
-CSV.foreach("planet_express_logs.csv", headers: true) do |row|
-  deliveries << row.to_hash
+CSV.foreach('planet_express_logs.csv', headers: true) do |row|
+  delivery_objects << Delivery.new(
+    row['Destination'],
+    row['Shipment'],
+    row['Crates'].to_s.to_i,
+    row['Money'].to_s.to_i
+  )
 end
 
-delivery_objects = deliveries.collect{|x| Delivery.new(x["Destination"], x["Shipment"], x["Crates"], x["Money"])}
+pilots = delivery_objects.collect(&:pilot).uniq
 
-total_revenue = delivery_objects.inject(0){|sum, x| sum += x.money}
+pilot_data = []
 
-class Pilot
-
-  attr_accessor :pilot, :deliveries, :revenue, :bonus
-
-  def initialize(pilot, deliveries, revenue, bonus)
-    @pilot = pilot
-    @deliveries = deliveries
-    @revenue = revenue
-    @bonus = bonus
-  end
-
-end
-
-pilots = delivery_objects.collect{|delivery| delivery.pilot}.uniq
-
-planets = delivery_objects.collect{|planet| planet.destination}.uniq
-
-total_deliveries = []
-
-total_deliveries << pilots.map do |pilot|
+pilot_data << pilots.map do |pilot|
   {
     pilot: pilot,
-    deliveries: delivery_objects.select{|delivery| delivery.pilot == pilot}.length.to_i,
-    bonus: delivery_objects.select{|delivery| delivery.pilot == pilot}.collect{|delivery| delivery.bonus}.inject(:+).to_i
+    deliveries: delivery_objects.each do |delivery|
+      delivery.pilot == pilot
+    end.length.to_i,
+    bonus: delivery_objects.select { |delivery| delivery.pilot == pilot }.collect(&:bonus).inject(:+).to_i
   }
 end
 
-revenue = []
-
-revenue << pilots.map do |pilot|
-  {
-    pilot: pilot,
-    revenue: delivery_objects.select{|delivery| delivery.pilot == pilot}.collect{|delivery| delivery.money}.inject(:+)
-  }
-end
-
-revenue_by_planet = []
-
-revenue_by_planet << planets.map do |planet|
-  {
-    planet: planet,
-    revenue: delivery_objects.select{|delivery| delivery.destination == planet}.collect{|delivery| delivery.money}.inject(:+)
-  }
-end
-
-new_file = File.open("./report.html", "w+")
-new_file << ERB.new(File.read("./report.html.erb")).result(binding)
+new_file = File.open('./report.html', 'w+')
+new_file << ERB.new(File.read('./report.html.erb')).result(binding)
 new_file.close

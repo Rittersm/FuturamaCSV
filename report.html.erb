@@ -16,8 +16,8 @@
 
         var data = google.visualization.arrayToDataTable([
           ['Pilot', 'Revenue'],
-          <% revenue.first.each do |x| %>
-          <%= [ x[:pilot], x[:revenue]] %>,
+          <% Delivery.pilot_money.each do |x, y| %>
+          <%=[ x, y ]%>,
           <% end %>
         ]);
 
@@ -42,7 +42,7 @@
     <hr>
     <main class="container-fluid" id="main">
       <div class="row">
-        <h1 class="col-md-4 text"><u>Total Revenue: <%= total_revenue %></u></h1>
+        <h1 class="col-md-4 text"><u>Total Revenue: <%= Delivery.total_revenue %></u></h1>
         <table class="col-md-3 col-md-offset-1">
           <tr>
             <th>Destination</th>
@@ -55,7 +55,7 @@
               <td><%= x.destination %></td>
               <td><%= x.shipment %></td>
               <td><%= x.crates %></td>
-              <td><%= x.money %></td>
+              <td>$<%= x.money %></td>
             </tr>
           <% end %>
         </table>
@@ -65,13 +65,13 @@
             <th>Total Deliveries</th>
             <th>Bonus</th>
           </tr>
-          <% total_deliveries.first.each do |pilot| %>
+          <%  pilot_data.first.each do |x| %>
             <tr>
-              <td><%= pilot[:pilot] %></td>
-              <td><%= pilot[:deliveries] %></td>
-              <td><%= pilot[:bonus] %></td>
+              <td><%= x[:pilot] %></td>
+              <td><%= x[:deliveries] %></td>
+              <td>$<%= x[:bonus] %></td>
             </tr>
-          <% end %>
+            <% end %>
         </table>
       </div>
       <hr>
@@ -82,10 +82,10 @@
             <th>Planet</th>
             <th>Revenue</th>
           </tr>
-          <% revenue_by_planet.first.each do |planet| %>
+          <% Delivery.planet_money.each do |planet, revenue| %>
             <tr>
-              <td><%= planet[:planet] %></td>
-              <td><%= planet[:revenue] %></td>
+              <td><%= planet %></td>
+              <td>$<%= revenue %></td>
             </tr>
           <% end %>
         </table>
